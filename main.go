@@ -13,6 +13,8 @@ func main() {
 		Addr:    ":" + port,
 	}
 
+	mux.Handle("/", http.FileServer(http.Dir(".")))
+
 	log.Printf("Serving on port: %s", port)
 
 	err := server.ListenAndServe()

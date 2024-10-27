@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
+
+	"github.com/Xavier-Hsiao/Chirpy/internal/api/handlers"
 )
 
 func main() {
@@ -13,7 +15,8 @@ func main() {
 		Addr:    ":" + port,
 	}
 
-	mux.Handle("/", http.FileServer(http.Dir(".")))
+	mux.Handle("/app/", http.StripPrefix("/app", http.FileServer(http.Dir("."))))
+	mux.HandleFunc("/healthz", handlers.HandlerReadiness)
 
 	log.Printf("Serving on port: %s", port)
 

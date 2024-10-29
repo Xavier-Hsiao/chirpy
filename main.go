@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/Xavier-Hsiao/Chirpy/internal/api/handlers"
+	"github.com/Xavier-Hsiao/Chirpy/internal/api/middleware"
+	"github.com/Xavier-Hsiao/Chirpy/internal/config"
 )
 
 func main() {
@@ -15,8 +17,12 @@ func main() {
 		Addr:    ":" + port,
 	}
 
-	mux.Handle("/app/", http.StripPrefix("/app", http.FileServer(http.Dir("."))))
+	cfg := config.ApiConfig{}
+
+	mux.Handle("/app/", middleware.MiddlewareMetricsInc(&cfg, http.StripPrefix("/app", http.FileServer(http.Dir(".")))))
 	mux.HandleFunc("/healthz", handlers.HandlerReadiness)
+	mux.HandleFunc("/metrics", handlers.HandlerMetrics(&cfg))
+	mux.HandleFunc("/reset", handlers.HandlerReset(&cfg))
 
 	log.Printf("Serving on port: %s", port)
 

@@ -15,7 +15,7 @@ func HandlerValidateLength(w http.ResponseWriter, r *http.Request) {
 		Body string `json:"body"`
 	}
 	type returnValues struct {
-		Valid bool `json:"valid"`
+		CleanedBody string `json:"cleaned_body"`
 	}
 
 	decoder := json.NewDecoder(r.Body)
@@ -38,5 +38,14 @@ func HandlerValidateLength(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	helpers.RespondWithJson(w, http.StatusOK, returnValues{Valid: true})
+	// Check badwords and replace them
+	profaneWords := map[string]struct{}{
+		"kerfuffle": {},
+		"sharbert":  {},
+		"fornax":    {},
+	}
+
+	cleanedBody := helpers.ReplaceBadWords(params.Body, profaneWords)
+
+	helpers.RespondWithJson(w, http.StatusOK, returnValues{CleanedBody: cleanedBody})
 }

@@ -1,4 +1,4 @@
-package helper
+package helpers
 
 import (
 	"log"
@@ -6,11 +6,12 @@ import (
 )
 
 func RespondWithError(w http.ResponseWriter, code int, msg string, err error) {
-	// Still want to print the error in terminal
+	// Server-side logging
 	if err != nil {
 		log.Println(err)
 	}
 
+	// Client-side user friendly error message
 	type errorResponse struct {
 		Error string `json:"error"`
 	}

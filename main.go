@@ -20,9 +20,10 @@ func main() {
 	cfg := config.ApiConfig{}
 
 	mux.Handle("/app/", middleware.MiddlewareMetricsInc(&cfg, http.StripPrefix("/app", http.FileServer(http.Dir(".")))))
-	mux.HandleFunc("GET /api/healthz", handlers.HandlerReadiness)
 	mux.HandleFunc("GET /admin/metrics", handlers.HandlerMetrics(&cfg))
 	mux.HandleFunc("POST /admin/reset", handlers.HandlerReset(&cfg))
+	mux.HandleFunc("GET /api/healthz", handlers.HandlerReadiness)
+	mux.HandleFunc("POST /api/validate_chirp", handlers.HandlerValidateLength)
 
 	log.Printf("Serving on port: %s", port)
 

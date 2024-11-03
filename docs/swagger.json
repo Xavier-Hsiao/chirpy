@@ -1,7 +1,36 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "This is the API server for Chirpy application",
+        "title": "Chirpy API",
+        "contact": {},
+        "version": "1.0"
     },
-    "paths": {}
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/healthz": {
+            "get": {
+                "description": "Returns OK if the server is healthy",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "health"
+                ],
+                "summary": "Health check endpoint",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

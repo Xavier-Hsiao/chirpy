@@ -1,4 +1,24 @@
+basePath: /
+host: localhost:8080
 info:
   contact: {}
-paths: {}
+  description: This is the API server for Chirpy application
+  title: Chirpy API
+  version: "1.0"
+paths:
+  /healthz:
+    get:
+      consumes:
+      - application/json
+      description: Returns OK if the server is healthy
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Health check endpoint
+      tags:
+      - health
 swagger: "2.0"

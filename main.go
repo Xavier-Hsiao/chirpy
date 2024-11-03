@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"os"
 
+	_ "github.com/Xavier-Hsiao/Chirpy/docs"
 	_ "github.com/lib/pq"
+	httpSwagger "github.com/swaggo/http-swagger"
 
 	"github.com/Xavier-Hsiao/Chirpy/internal/api/handlers"
 	"github.com/Xavier-Hsiao/Chirpy/internal/api/middleware"
@@ -22,7 +24,7 @@ func main() {
 		Addr:    ":" + port,
 	}
 
-	dbURL := os.Getenv("DB_URL")
+	dbURL := os.Getenv("")
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatal("Failed to connect to database!\n")
@@ -38,6 +40,9 @@ func main() {
 	mux.HandleFunc("POST /admin/reset", handlers.HandlerReset(&cfg))
 	mux.HandleFunc("GET /api/healthz", handlers.HandlerReadiness)
 	mux.HandleFunc("POST /api/validate_chirp", handlers.HandlerValidateLength)
+
+	// Swagger UI endpoint
+	mux.Handle("/swagger/", httpSwagger.WrapHandler)
 
 	log.Printf("Serving on port: %s", port)
 

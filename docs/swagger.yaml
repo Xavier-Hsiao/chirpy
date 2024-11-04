@@ -6,6 +6,21 @@ info:
   title: Chirpy API
   version: "1.0"
 paths:
+  /admin/metrics:
+    get:
+      description: Returns an HTML page showing the number of times Chirpy has been
+        visited
+      operationId: get-metrics
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: HTML content displaying the visit count
+          schema:
+            type: string
+      summary: Get Metrics
+      tags:
+      - metrics
   /api/healthz:
     get:
       consumes:

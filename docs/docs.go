@@ -15,6 +15,27 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/admin/metrics": {
+            "get": {
+                "description": "Returns an HTML page showing the number of times Chirpy has been visited",
+                "produces": [
+                    "text/html"
+                ],
+                "tags": [
+                    "metrics"
+                ],
+                "summary": "Get Metrics",
+                "operationId": "get-metrics",
+                "responses": {
+                    "200": {
+                        "description": "HTML content displaying the visit count",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/healthz": {
             "get": {
                 "description": "Returns OK if the server is healthy",

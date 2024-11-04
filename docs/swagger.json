@@ -30,6 +30,27 @@
                 }
             }
         },
+        "/admin/reset": {
+            "post": {
+                "description": "Reset the number of times Chirpy has been visisted to 0",
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "metrics"
+                ],
+                "summary": "Reset Metrics",
+                "operationId": "post-reset",
+                "responses": {
+                    "200": {
+                        "description": "Hits set to 0",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/healthz": {
             "get": {
                 "description": "Returns OK if the server is healthy",

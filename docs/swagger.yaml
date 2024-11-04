@@ -21,6 +21,20 @@ paths:
       summary: Get Metrics
       tags:
       - metrics
+  /admin/reset:
+    post:
+      description: Reset the number of times Chirpy has been visisted to 0
+      operationId: post-reset
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: Hits set to 0
+          schema:
+            type: string
+      summary: Reset Metrics
+      tags:
+      - metrics
   /api/healthz:
     get:
       consumes:

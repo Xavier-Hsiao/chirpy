@@ -1,4 +1,20 @@
 basePath: /
+definitions:
+  handlers.parameters:
+    properties:
+      body:
+        type: string
+    type: object
+  handlers.returnValues:
+    properties:
+      cleaned_body:
+        type: string
+    type: object
+  helpers.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -50,4 +66,36 @@ paths:
       summary: Health check endpoint
       tags:
       - health
+  /app/validate_chirp:
+    post:
+      consumes:
+      - application/json
+      description: Validate a chirp's length (should be less than 14 characters) and
+        replace profane words with ****
+      operationId: post-validation
+      parameters:
+      - description: Chirp content to validate
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.parameters'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cleaned chirp body with profanity removed
+          schema:
+            $ref: '#/definitions/handlers.returnValues'
+        "400":
+          description: Chirp is too long, should be less than 140 chars
+          schema:
+            $ref: '#/definitions/helpers.ErrorResponse'
+        "500":
+          description: Failed to decode parameters
+          schema:
+            $ref: '#/definitions/helpers.ErrorResponse'
+      summary: Validate a chirp
+      tags:
+      - validation
 swagger: "2.0"

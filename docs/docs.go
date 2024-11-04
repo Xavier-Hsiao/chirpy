@@ -79,6 +79,79 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/app/validate_chirp": {
+            "post": {
+                "description": "Validate a chirp's length (should be less than 14 characters) and replace profane words with ****",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "validation"
+                ],
+                "summary": "Validate a chirp",
+                "operationId": "post-validation",
+                "parameters": [
+                    {
+                        "description": "Chirp content to validate",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.parameters"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cleaned chirp body with profanity removed",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.returnValues"
+                        }
+                    },
+                    "400": {
+                        "description": "Chirp is too long, should be less than 140 chars",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to decode parameters",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "handlers.parameters": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.returnValues": {
+            "type": "object",
+            "properties": {
+                "cleaned_body": {
+                    "type": "string"
+                }
+            }
+        },
+        "helpers.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
         }
     }
 }`

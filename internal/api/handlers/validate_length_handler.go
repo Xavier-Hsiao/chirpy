@@ -7,16 +7,25 @@ import (
 	"github.com/Xavier-Hsiao/Chirpy/internal/helpers"
 )
 
-// It should expect a JSON body of chirp
-// If any error occur, it should respond with an appropriate HTTP status code and a JSON body
-// If a chirp is valid, respond with a JSON body as well
+type parameters struct {
+	Body string `json:"body"`
+}
+type returnValues struct {
+	CleanedBody string `json:"cleaned_body"`
+}
+
+//	@Summary		Validate a chirp
+//	@Description	Validate a chirp's length (should be less than 14 characters) and replace profane words with ****
+//	@Tags			validation
+//	@ID				post-validation
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		parameters				true	"Chirp content to validate"
+//	@Success		200		{object}	returnValues			"Cleaned chirp body with profanity removed"
+//	@Failure		400		{object}	helpers.ErrorResponse	"Chirp is too long, should be less than 140 chars"
+//	@Failure		500		{object}	helpers.ErrorResponse	"Failed to decode parameters"
+//	@Router			/app/validate_chirp [post]
 func HandlerValidateLength(w http.ResponseWriter, r *http.Request) {
-	type parameters struct {
-		Body string `json:"body"`
-	}
-	type returnValues struct {
-		CleanedBody string `json:"cleaned_body"`
-	}
 
 	decoder := json.NewDecoder(r.Body)
 	params := parameters{}

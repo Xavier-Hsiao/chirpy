@@ -16,11 +16,11 @@ import (
 	"github.com/Xavier-Hsiao/Chirpy/internal/database"
 )
 
-// @title Chirpy API
-// @version 1.0
-// @description This is the API server for Chirpy application
-// @host localhost:8080
-// @BasePath /
+//	@title			Chirpy API
+//	@version		1.0
+//	@description	This is the API server for Chirpy application
+//	@host			localhost:8080
+//	@BasePath		/
 func main() {
 	const port = "8080"
 	mux := http.NewServeMux()

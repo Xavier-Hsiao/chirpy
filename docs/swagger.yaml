@@ -6,7 +6,7 @@ info:
   title: Chirpy API
   version: "1.0"
 paths:
-  /healthz:
+  /api/healthz:
     get:
       consumes:
       - application/json

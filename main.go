@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -24,29 +23,36 @@ import (
 // @host			localhost:8080
 // @BasePath		/
 func main() {
+	const port = "8080"
+
 	// Load environment variables from .env file
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
-	const port = "8080"
 	mux := http.NewServeMux()
-	server := &http.Server{
-		Handler: mux,
-		Addr:    ":" + port,
-	}
 
 	dbURL := os.Getenv("DB_URL")
-	fmt.Println("Database URL:", dbURL)
-	db, err := sql.Open("postgres", dbURL)
+	if dbURL == "" {
+		log.Fatal("DB_URL must be set in your .env file")
+	}
+
+	// Use it to protect /admin/reset endpoint
+	platform := os.Getenv("PLATFORM")
+	if platform == "" {
+		log.Fatal("PLATFORM must be set")
+	}
+
+	dbConn, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatal("Failed to connect to database!\n")
 	}
 
-	dbQueries := database.New(db)
+	dbQueries := database.New(dbConn)
 	cfg := config.ApiConfig{
 		DBQueries: dbQueries,
+		Platform:  platform,
 	}
 
 	mux.Handle("/app/", middleware.MiddlewareMetricsInc(&cfg, http.StripPrefix("/app", http.FileServer(http.Dir(".")))))
@@ -62,6 +68,11 @@ func main() {
 	mux.Handle("/swagger/", httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"), // The URL pointing to your Swagger docs
 	))
+
+	server := &http.Server{
+		Handler: mux,
+		Addr:    ":" + port,
+	}
 
 	log.Printf("Serving on port: %s", port)
 

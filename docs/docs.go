@@ -38,12 +38,12 @@ const docTemplate = `{
         },
         "/admin/reset": {
             "post": {
-                "description": "Reset the number of times Chirpy has been visisted to 0",
+                "description": "Delete all users in database and reset the number of times Chirpy has been visisted to 0",
                 "produces": [
                     "text/plain"
                 ],
                 "tags": [
-                    "metrics"
+                    "user"
                 ],
                 "summary": "Reset Metrics",
                 "operationId": "post-reset",
@@ -52,6 +52,12 @@ const docTemplate = `{
                         "description": "Hits set to 0",
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to delete users in db",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ErrorResponse"
                         }
                     }
                 }
@@ -92,7 +98,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Create a new user",
+                "summary": "Create new user",
                 "operationId": "post-create-user",
                 "parameters": [
                     {

@@ -55,7 +55,8 @@ paths:
       - metrics
   /admin/reset:
     post:
-      description: Reset the number of times Chirpy has been visisted to 0
+      description: Delete all users in database and reset the number of times Chirpy
+        has been visisted to 0
       operationId: post-reset
       produces:
       - text/plain
@@ -64,9 +65,13 @@ paths:
           description: Hits set to 0
           schema:
             type: string
+        "500":
+          description: Failed to delete users in db
+          schema:
+            $ref: '#/definitions/helpers.ErrorResponse'
       summary: Reset Metrics
       tags:
-      - metrics
+      - user
   /api/healthz:
     get:
       consumes:
@@ -106,7 +111,7 @@ paths:
           description: Failed to create user in DB
           schema:
             $ref: '#/definitions/helpers.ErrorResponse'
-      summary: Create a new user
+      summary: Create new user
       tags:
       - user
   /app/validate_chirp:

@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/Xavier-Hsiao/Chirpy/internal/config"
@@ -14,7 +15,7 @@ type userParams struct {
 	Email string
 }
 
-// @Summary		Create a new user
+// @Summary		Create new user
 // @Description	Create a new Chirpy user
 // @Tags			user
 // @ID				post-create-user
@@ -58,6 +59,8 @@ func HandlerCreateUser(cfg *config.ApiConfig) http.HandlerFunc {
 			UpdatedAt: user.UpdatedAt,
 			Email:     user.Email,
 		})
+
+		log.Printf("user %s was created!\n", user.Email)
 	}
 
 }

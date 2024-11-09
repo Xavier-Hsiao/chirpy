@@ -10,9 +10,25 @@ definitions:
       cleaned_body:
         type: string
     type: object
+  handlers.userParams:
+    properties:
+      email:
+        type: string
+    type: object
   helpers.ErrorResponse:
     properties:
       error:
+        type: string
+    type: object
+  models.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      updated_at:
         type: string
     type: object
 host: localhost:8080
@@ -66,6 +82,33 @@ paths:
       summary: Health check endpoint
       tags:
       - health
+  /api/users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new Chirpy user
+      operationId: post-create-user
+      parameters:
+      - description: user email to get new user created
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.userParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: created user's information
+          schema:
+            $ref: '#/definitions/models.User'
+        "500":
+          description: Failed to create user in DB
+          schema:
+            $ref: '#/definitions/helpers.ErrorResponse'
+      summary: Create a new user
+      tags:
+      - user
   /app/validate_chirp:
     post:
       consumes:

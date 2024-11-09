@@ -2,11 +2,13 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	_ "github.com/Xavier-Hsiao/Chirpy/docs"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	httpSwagger "github.com/swaggo/http-swagger"
 
@@ -16,12 +18,18 @@ import (
 	"github.com/Xavier-Hsiao/Chirpy/internal/database"
 )
 
-//	@title			Chirpy API
-//	@version		1.0
-//	@description	This is the API server for Chirpy application
-//	@host			localhost:8080
-//	@BasePath		/
+// @title			Chirpy API
+// @version		1.0
+// @description	This is the API server for Chirpy application
+// @host			localhost:8080
+// @BasePath		/
 func main() {
+	// Load environment variables from .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	const port = "8080"
 	mux := http.NewServeMux()
 	server := &http.Server{
@@ -29,7 +37,8 @@ func main() {
 		Addr:    ":" + port,
 	}
 
-	dbURL := os.Getenv("")
+	dbURL := os.Getenv("DB_URL")
+	fmt.Println("Database URL:", dbURL)
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatal("Failed to connect to database!\n")
@@ -47,6 +56,7 @@ func main() {
 	mux.HandleFunc("POST /admin/reset", handlers.HandlerReset(&cfg))
 	mux.HandleFunc("GET /api/healthz", handlers.HandlerReadiness)
 	mux.HandleFunc("POST /api/validate_chirp", handlers.HandlerValidateLength)
+	mux.HandleFunc("POST /api/users", handlers.HandlerCreateUser(&cfg))
 
 	// Swagger UI endpoint
 	mux.Handle("/swagger/", httpSwagger.Handler(

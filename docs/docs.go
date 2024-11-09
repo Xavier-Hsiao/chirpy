@@ -80,6 +80,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/users": {
+            "post": {
+                "description": "Create a new Chirpy user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Create a new user",
+                "operationId": "post-create-user",
+                "parameters": [
+                    {
+                        "description": "user email to get new user created",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.userParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "created user's information",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to create user in DB",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/app/validate_chirp": {
             "post": {
                 "description": "Validate a chirp's length (should be less than 14 characters) and replace profane words with ****",
@@ -145,10 +186,35 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.userParams": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
         "helpers.ErrorResponse": {
             "type": "object",
             "properties": {
                 "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }

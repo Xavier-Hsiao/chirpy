@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  handlers.chirpParams:
+    properties:
+      body:
+        type: string
+      user_id:
+        type: string
+    type: object
   handlers.parameters:
     properties:
       body:
@@ -18,6 +25,19 @@ definitions:
   helpers.ErrorResponse:
     properties:
       error:
+        type: string
+    type: object
+  models.Chirp:
+    properties:
+      body:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      updated_at:
+        type: string
+      user_id:
         type: string
     type: object
   models.User:
@@ -72,6 +92,37 @@ paths:
       summary: Reset Metrics
       tags:
       - user
+  /api/chirps:
+    post:
+      consumes:
+      - application/json
+      description: Create a new chirp message instance
+      operationId: post-create-chirp
+      parameters:
+      - description: chrip message body and the author's ID
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.chirpParams'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: created chirp's information
+          schema:
+            $ref: '#/definitions/models.Chirp'
+        "400":
+          description: Chirp is too long, should be less than 140 chars
+          schema:
+            $ref: '#/definitions/helpers.ErrorResponse'
+        "500":
+          description: 'Internal server error: can not deal with data properly'
+          schema:
+            $ref: '#/definitions/helpers.ErrorResponse'
+      summary: Create new chirp
+      tags:
+      - chirp
   /api/healthz:
     get:
       consumes:
@@ -103,7 +154,7 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
+        "201":
           description: created user's information
           schema:
             $ref: '#/definitions/models.User'

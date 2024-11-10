@@ -63,6 +63,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/chirps": {
+            "post": {
+                "description": "Create a new chirp message instance",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chirp"
+                ],
+                "summary": "Create new chirp",
+                "operationId": "post-create-chirp",
+                "parameters": [
+                    {
+                        "description": "chrip message body and the author's ID",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.chirpParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created chirp's information",
+                        "schema": {
+                            "$ref": "#/definitions/models.Chirp"
+                        }
+                    },
+                    "400": {
+                        "description": "Chirp is too long, should be less than 140 chars",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error: can not deal with data properly",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/healthz": {
             "get": {
                 "description": "Returns OK if the server is healthy",
@@ -112,7 +159,7 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "created user's information",
                         "schema": {
                             "$ref": "#/definitions/models.User"
@@ -176,6 +223,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "handlers.chirpParams": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "handlers.parameters": {
             "type": "object",
             "properties": {
@@ -204,6 +262,26 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Chirp": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }

@@ -15,17 +15,17 @@ type userParams struct {
 	Email string
 }
 
-// @Summary		Create new user
-// @Description	Create a new Chirpy user
-// @Tags			user
-// @ID				post-create-user
-// @Accept			json
-// @Produce		json
-// @Param			body	body		userParams				true	"user email to get new user created"
-// @Success		200		{object}	models.User				"created user's information"
-// @Failure		500		{object}	helpers.ErrorResponse	"Failed to decode parameters"
-// @Failure		500		{object}	helpers.ErrorResponse	"Failed to create user in DB"
-// @Router			/api/users [post]
+//	@Summary		Create new user
+//	@Description	Create a new Chirpy user
+//	@Tags			user
+//	@ID				post-create-user
+//	@Accept			json
+//	@Produce		json
+//	@Param			body	body		userParams				true	"user email to get new user created"
+//	@Success		201		{object}	models.User				"created user's information"
+//	@Failure		500		{object}	helpers.ErrorResponse	"Failed to decode parameters"
+//	@Failure		500		{object}	helpers.ErrorResponse	"Failed to create user in DB"
+//	@Router			/api/users [post]
 func HandlerCreateUser(cfg *config.ApiConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 

@@ -7,7 +7,7 @@ import (
 )
 
 func RespondWithJson(w http.ResponseWriter, code int, payload interface{}) error {
-	response, err := json.Marshal(payload)
+	response, err := json.MarshalIndent(payload, "", " ")
 	if err != nil {
 		log.Printf("Error marshalling JSON: %s", err)
 		w.WriteHeader(500)

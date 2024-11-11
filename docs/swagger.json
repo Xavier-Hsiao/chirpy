@@ -58,6 +58,34 @@
             }
         },
         "/api/chirps": {
+            "get": {
+                "description": "Retreive all chirps from database in ascendent order of created_at time",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chirp"
+                ],
+                "summary": "Get all chirps",
+                "operationId": "get-chirps",
+                "responses": {
+                    "200": {
+                        "description": "created chirp's information",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Chirp"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error: can not deal with data properly",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Create a new chirp message instance",
                 "consumes": [

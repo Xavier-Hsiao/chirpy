@@ -93,6 +93,26 @@ paths:
       tags:
       - user
   /api/chirps:
+    get:
+      description: Retreive all chirps from database in ascendent order of created_at
+        time
+      operationId: get-chirps
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: created chirp's information
+          schema:
+            items:
+              $ref: '#/definitions/models.Chirp'
+            type: array
+        "500":
+          description: 'Internal server error: can not deal with data properly'
+          schema:
+            $ref: '#/definitions/helpers.ErrorResponse'
+      summary: Get all chirps
+      tags:
+      - chirp
     post:
       consumes:
       - application/json

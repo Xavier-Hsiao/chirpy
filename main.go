@@ -64,6 +64,7 @@ func main() {
 	mux.HandleFunc("POST /api/validate_chirp", handlers.HandlerValidateLength)
 	mux.HandleFunc("POST /api/users", handlers.HandlerCreateUser(&cfg))
 	mux.HandleFunc("POST /api/chirps", handlers.HandlerCreateChirp(&cfg))
+	mux.HandleFunc("GET /api/chirps", handlers.HandlerGetChirps(&cfg))
 
 	// Swagger UI endpoint
 	mux.Handle("/swagger/", httpSwagger.Handler(

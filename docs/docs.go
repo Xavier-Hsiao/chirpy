@@ -138,6 +138,39 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/chirps/{chirpID}": {
+            "get": {
+                "description": "Retreive the chirp from database by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chirp"
+                ],
+                "summary": "Get a specific chirp",
+                "operationId": "get-chirp-by-id",
+                "responses": {
+                    "200": {
+                        "description": "created chirp's information",
+                        "schema": {
+                            "$ref": "#/definitions/models.Chirp"
+                        }
+                    },
+                    "404": {
+                        "description": "Chirp not found in database",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error: can not deal with data properly",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/healthz": {
             "get": {
                 "description": "Returns OK if the server is healthy",

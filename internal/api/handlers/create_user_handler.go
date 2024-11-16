@@ -6,14 +6,12 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/Xavier-Hsiao/Chirpy/internal/auth"
 	"github.com/Xavier-Hsiao/Chirpy/internal/config"
+	"github.com/Xavier-Hsiao/Chirpy/internal/database"
 	"github.com/Xavier-Hsiao/Chirpy/internal/helpers"
 	"github.com/Xavier-Hsiao/Chirpy/internal/models"
 )
-
-type userParams struct {
-	Email string
-}
 
 // @Summary		Create new user
 // @Description	Create a new Chirpy user
@@ -23,8 +21,7 @@ type userParams struct {
 // @Produce		json
 // @Param			body	body		userParams				true	"user email to get new user created"
 // @Success		201		{object}	models.User				"created user's information"
-// @Failure		500		{object}	helpers.ErrorResponse	"Failed to decode parameters"
-// @Failure		500		{object}	helpers.ErrorResponse	"Failed to create user in DB"
+// @Failure		500		{object}	helpers.ErrorResponse	"Internal server error occured"
 // @Router			/api/users [post]
 func HandlerCreateUser(cfg *config.ApiConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -42,14 +39,18 @@ func HandlerCreateUser(cfg *config.ApiConfig) http.HandlerFunc {
 			return
 		}
 
-		user, err := cfg.DBQueries.CreateUser(context.Background(), params.Email)
+		hashedPassword, err := auth.HashPassword(params.Password)
 		if err != nil {
-			helpers.RespondWithError(
-				w,
-				http.StatusInternalServerError,
-				"Failed to create user in DB",
-				err,
-			)
+			helpers.RespondWithError(w, http.StatusInternalServerError, "Failed to hash password", err)
+			return
+		}
+
+		user, err := cfg.DBQueries.CreateUser(context.Background(), database.CreateUserParams{
+			Email:          params.Email,
+			HashedPassword: hashedPassword,
+		})
+		if err != nil {
+			helpers.RespondWithError(w, http.StatusInternalServerError, "Failed to create user in DB", err)
 			return
 		}
 

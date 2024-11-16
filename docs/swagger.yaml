@@ -21,6 +21,8 @@ definitions:
     properties:
       email:
         type: string
+      password:
+        type: string
     type: object
   helpers.ErrorResponse:
     properties:
@@ -151,15 +153,15 @@ paths:
       - application/json
       responses:
         "200":
-          description: created chirp's information
+          description: Created chirp's information
           schema:
             $ref: '#/definitions/models.Chirp'
-        "404":
-          description: Chirp not found in database
+        "400":
+          description: Invalid chirp id provided
           schema:
             $ref: '#/definitions/helpers.ErrorResponse'
-        "500":
-          description: 'Internal server error: can not deal with data properly'
+        "404":
+          description: Chirp not found in database
           schema:
             $ref: '#/definitions/helpers.ErrorResponse'
       summary: Get a specific chirp
@@ -180,6 +182,37 @@ paths:
       summary: Health check endpoint
       tags:
       - health
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: Check if the users are who they claimed
+      operationId: post-user-login
+      parameters:
+      - description: user email and passowrd
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.userParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: user's information
+          schema:
+            $ref: '#/definitions/models.User'
+        "401":
+          description: Incorrect email or password
+          schema:
+            $ref: '#/definitions/helpers.ErrorResponse'
+        "500":
+          description: 'Internal server error: can not deal with data properly'
+          schema:
+            $ref: '#/definitions/helpers.ErrorResponse'
+      summary: Login users
+      tags:
+      - user
   /api/users:
     post:
       consumes:
@@ -201,7 +234,7 @@ paths:
           schema:
             $ref: '#/definitions/models.User'
         "500":
-          description: Failed to create user in DB
+          description: Internal server error occured
           schema:
             $ref: '#/definitions/helpers.ErrorResponse'
       summary: Create new user

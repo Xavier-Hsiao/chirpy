@@ -14,8 +14,8 @@ import (
 // @Tags			chirp
 // @ID				get-chirp-by-id
 // @Produce		json
-// @Success		200	{object}	models.Chirp			"created chirp's information"
-// @Failure		400	{object}	helpers.ErrorResponse	"Internal server error: can not deal with data properly"
+// @Success		200	{object}	models.Chirp			"Created chirp's information"
+// @Failure		400	{object}	helpers.ErrorResponse	"Invalid chirp id provided"
 // @Failure		404	{object}	helpers.ErrorResponse	"Chirp not found in database"
 // @Router			/api/chirps/{chirpID} [get]
 func HandlerGetChirpById(cfg *config.ApiConfig) http.HandlerFunc {
@@ -23,7 +23,7 @@ func HandlerGetChirpById(cfg *config.ApiConfig) http.HandlerFunc {
 		// Get the chirp's id from path and convert it to uuid
 		id, err := uuid.Parse(r.PathValue("chirpID"))
 		if err != nil {
-			helpers.RespondWithError(w, http.StatusBadRequest, "Failed to convert id string to uuid", err)
+			helpers.RespondWithError(w, http.StatusBadRequest, "Invalid chirp id provided", err)
 			return
 		}
 

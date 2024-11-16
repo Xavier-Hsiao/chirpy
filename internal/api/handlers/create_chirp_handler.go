@@ -9,13 +9,7 @@ import (
 	"github.com/Xavier-Hsiao/Chirpy/internal/database"
 	"github.com/Xavier-Hsiao/Chirpy/internal/helpers"
 	"github.com/Xavier-Hsiao/Chirpy/internal/models"
-	"github.com/google/uuid"
 )
-
-type chirpParams struct {
-	Body   string    `json:"body"`
-	UserID uuid.UUID `json:"user_id"`
-}
 
 // @Summary		Create new chirp
 // @Description	Create a new chirp message instance

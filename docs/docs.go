@@ -151,19 +151,19 @@ const docTemplate = `{
                 "operationId": "get-chirp-by-id",
                 "responses": {
                     "200": {
-                        "description": "created chirp's information",
+                        "description": "Created chirp's information",
                         "schema": {
                             "$ref": "#/definitions/models.Chirp"
                         }
                     },
-                    "404": {
-                        "description": "Chirp not found in database",
+                    "400": {
+                        "description": "Invalid chirp id provided",
                         "schema": {
                             "$ref": "#/definitions/helpers.ErrorResponse"
                         }
                     },
-                    "500": {
-                        "description": "Internal server error: can not deal with data properly",
+                    "404": {
+                        "description": "Chirp not found in database",
                         "schema": {
                             "$ref": "#/definitions/helpers.ErrorResponse"
                         }
@@ -189,6 +189,53 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "description": "Check if the users are who they claimed",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Login users",
+                "operationId": "post-user-login",
+                "parameters": [
+                    {
+                        "description": "user email and passowrd",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.userParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "user's information",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "401": {
+                        "description": "Incorrect email or password",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error: can not deal with data properly",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ErrorResponse"
                         }
                     }
                 }
@@ -227,7 +274,7 @@ const docTemplate = `{
                         }
                     },
                     "500": {
-                        "description": "Failed to create user in DB",
+                        "description": "Internal server error occured",
                         "schema": {
                             "$ref": "#/definitions/helpers.ErrorResponse"
                         }
@@ -315,6 +362,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "email": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 }
             }

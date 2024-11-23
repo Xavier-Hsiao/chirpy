@@ -4,23 +4,30 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/Xavier-Hsiao/Chirpy/internal/auth"
 	"github.com/Xavier-Hsiao/Chirpy/internal/config"
 	"github.com/Xavier-Hsiao/Chirpy/internal/helpers"
+	"github.com/Xavier-Hsiao/Chirpy/internal/models"
 )
 
-//	@Summary		Login users
-//	@Description	Check if the users are who they claimed
-//	@Tags			user
-//	@ID				post-user-login
-//	@Accept			json
-//	@Produce		json
-//	@Param			body	body		userParams				true	"user email and passowrd"
-//	@Success		200		{object}	models.User				"user's information"
-//	@Failure		500		{object}	helpers.ErrorResponse	"Internal server error: can not deal with data properly"
-//	@Failure		401		{object}	helpers.ErrorResponse	"Incorrect email or password"
-//	@Router			/api/login [post]
+type loginResp struct {
+	User  models.User `json:"user"`
+	Token string      `json:"token"`
+}
+
+// @Summary		Login users
+// @Description	Check if the users are who they claimed
+// @Tags			user
+// @ID				post-user-login
+// @Accept			json
+// @Produce		json
+// @Param			body	body		userParams				true	"user email and passowrd"
+// @Success		200		{object}	models.User				"user's information"
+// @Failure		500		{object}	helpers.ErrorResponse	"Internal server error: can not deal with data properly"
+// @Failure		401		{object}	helpers.ErrorResponse	"Incorrect email or password"
+// @Router			/api/login [post]
 func HandlerLogin(cfg *config.ApiConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Get the request body
@@ -46,9 +53,25 @@ func HandlerLogin(cfg *config.ApiConfig) http.HandlerFunc {
 			return
 		}
 
+		// Handle JWT expiration time, default is 1 hour
+		expirationTime := time.Hour
+		if params.ExpiresInSeconds > 0 && params.ExpiresInSeconds < 3600 {
+			expirationTime = time.Duration(params.ExpiresInSeconds)
+		}
+
+		// Generate JWT access token
+		accessToken, err := auth.MakeJWT(dbUser.ID, cfg.JWTSecret, expirationTime)
+		if err != nil {
+			helpers.RespondWithError(w, http.StatusInternalServerError, "Faile to generate JWT access token", err)
+			return
+		}
+
 		// Return user json once password check passed
 		user := helpers.ConvertUser(dbUser)
-		helpers.RespondWithJson(w, http.StatusOK, user)
+		err = helpers.RespondWithJson(w, http.StatusOK, loginResp{
+			User:  user,
+			Token: accessToken,
+		})
 		if err != nil {
 			helpers.RespondWithError(w, http.StatusInternalServerError, "Failed to parse resp data", err)
 			return

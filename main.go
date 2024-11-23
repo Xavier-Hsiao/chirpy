@@ -44,6 +44,11 @@ func main() {
 		log.Fatal("PLATFORM must be set")
 	}
 
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if platform == "" {
+		log.Fatal("JWT_SECRET must be set")
+	}
+
 	dbConn, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatal("Failed to connect to database!\n")
@@ -53,6 +58,7 @@ func main() {
 	cfg := config.ApiConfig{
 		DBQueries: dbQueries,
 		Platform:  platform,
+		JWTSecret: jwtSecret,
 	}
 
 	mux.Handle("/app/", middleware.MiddlewareMetricsInc(&cfg, http.StripPrefix("/app", http.FileServer(http.Dir(".")))))

@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/Xavier-Hsiao/Chirpy/internal/auth"
 	"github.com/Xavier-Hsiao/Chirpy/internal/config"
 	"github.com/Xavier-Hsiao/Chirpy/internal/database"
 	"github.com/Xavier-Hsiao/Chirpy/internal/helpers"
@@ -24,10 +25,23 @@ import (
 // @Router			/api/chirps [post]
 func HandlerCreateChirp(cfg *config.ApiConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// Validate JWT access token
+		accessToken, err := auth.GetBearerToken(r.Header)
+		if err != nil {
+			helpers.RespondWithError(w, http.StatusUnauthorized, "Couldn't find JWT token", err)
+			return
+		}
+
+		userID, err := auth.ValidateJWT(accessToken, cfg.JWTSecret)
+		if err != nil {
+			helpers.RespondWithError(w, http.StatusUnauthorized, "Failed to valiate JWT", err)
+			return
+		}
+
 		// Get the request body
 		decoder := json.NewDecoder(r.Body)
 		params := chirpParams{}
-		err := decoder.Decode(&params)
+		err = decoder.Decode(&params)
 		if err != nil {
 			helpers.RespondWithError(w, http.StatusInternalServerError, err.Error(), err)
 			return
@@ -52,7 +66,7 @@ func HandlerCreateChirp(cfg *config.ApiConfig) http.HandlerFunc {
 		// Create the new chirp in database
 		chirp, err := cfg.DBQueries.CreateChirp(r.Context(), database.CreateChirpParams{
 			Body:   cleanedBody,
-			UserID: params.UserID,
+			UserID: userID,
 		})
 		if err != nil {
 			helpers.RespondWithError(w, http.StatusInternalServerError, "Failed to create chirp in database", err)

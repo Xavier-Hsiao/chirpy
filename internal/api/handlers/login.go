@@ -47,6 +47,7 @@ func HandlerLogin(cfg *config.ApiConfig) http.HandlerFunc {
 			helpers.RespondWithError(w, http.StatusInternalServerError, "Failed to get user by email from db", err)
 			return
 		}
+		log.Printf("dbUser is chirpy red: %v\n", dbUser.IsChirpyRed)
 
 		// Check password
 		err = auth.CheckPasswordHash(params.Password, dbUser.HashedPassword)
@@ -80,16 +81,19 @@ func HandlerLogin(cfg *config.ApiConfig) http.HandlerFunc {
 
 		// Return user json once password check passed
 		user := helpers.ConvertUser(dbUser)
-		err = helpers.RespondWithJson(w, http.StatusOK, loginResp{
+		log.Printf("Converted User is chirpy red: %v\n", user.IsChirpyRed)
+		response := loginResp{
 			User:         user,
 			Token:        accessToken,
 			RefreshToken: refreshToken,
-		})
+		}
+		err = helpers.RespondWithJson(w, http.StatusOK, response)
 		if err != nil {
 			helpers.RespondWithError(w, http.StatusInternalServerError, "Failed to parse resp data", err)
 			return
 		}
 
 		log.Printf("User %s logged in!\n", user.Email)
+		log.Printf("LoginResp: %v\n", response)
 	}
 }

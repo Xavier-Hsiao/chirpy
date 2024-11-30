@@ -9,10 +9,11 @@ import (
 // So need to use this helper to convert database.Chirp into models.Chirp
 func ConvertUser(user database.User) models.User {
 	converted := models.User{
-		ID:        user.ID,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
-		Email:     user.Email,
+		ID:          user.ID,
+		CreatedAt:   user.CreatedAt,
+		UpdatedAt:   user.UpdatedAt,
+		Email:       user.Email,
+		IsChirpyRed: user.IsChirpyRed,
 	}
 
 	return converted

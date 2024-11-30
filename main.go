@@ -69,12 +69,14 @@ func main() {
 	mux.HandleFunc("GET /api/healthz", handlers.HandlerReadiness)
 	mux.HandleFunc("POST /api/validate_chirp", handlers.HandlerValidateLength)
 	mux.HandleFunc("POST /api/users", handlers.HandlerCreateUser(&cfg))
+	mux.HandleFunc("PUT /api/users", handlers.HandlerUpdateUsers(&cfg))
 	mux.HandleFunc("POST /api/login", handlers.HandlerLogin(&cfg))
 	mux.HandleFunc("POST /api/refresh", handlers.HandlerRefreshJWT(&cfg))
 	mux.HandleFunc("POST /api/revoke", handlers.HandlerRevokeJWT(&cfg))
 	mux.HandleFunc("POST /api/chirps", handlers.HandlerCreateChirp(&cfg))
 	mux.HandleFunc("GET /api/chirps", handlers.HandlerGetChirps(&cfg))
 	mux.HandleFunc("GET /api/chirps/{chirpID}", handlers.HandlerGetChirpById(&cfg))
+	mux.HandleFunc("DELETE /api/chirps/{chirpID}", handlers.HandlerDeleteChirp(&cfg))
 
 	// Swagger UI endpoint
 	mux.Handle("/swagger/", httpSwagger.Handler(

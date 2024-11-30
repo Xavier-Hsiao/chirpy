@@ -8,13 +8,15 @@ import (
 
 	"github.com/Xavier-Hsiao/Chirpy/internal/auth"
 	"github.com/Xavier-Hsiao/Chirpy/internal/config"
+	"github.com/Xavier-Hsiao/Chirpy/internal/database"
 	"github.com/Xavier-Hsiao/Chirpy/internal/helpers"
 	"github.com/Xavier-Hsiao/Chirpy/internal/models"
 )
 
 type loginResp struct {
-	User  models.User `json:"user"`
-	Token string      `json:"token"`
+	User         models.User `json:"user"`
+	Token        string      `json:"token"`
+	RefreshToken string      `json:"refresh_token"`
 }
 
 // @Summary		Login users
@@ -53,24 +55,35 @@ func HandlerLogin(cfg *config.ApiConfig) http.HandlerFunc {
 			return
 		}
 
-		// Handle JWT expiration time, default is 1 hour
-		expirationTime := time.Hour
-		if params.ExpiresInSeconds > 0 && params.ExpiresInSeconds < 3600 {
-			expirationTime = time.Duration(params.ExpiresInSeconds)
+		// Generate JWT access token
+		accessToken, err := auth.MakeJWT(dbUser.ID, cfg.JWTSecret, time.Hour)
+		if err != nil {
+			helpers.RespondWithError(w, http.StatusInternalServerError, "Failed to generate JWT access token", err)
+			return
 		}
 
-		// Generate JWT access token
-		accessToken, err := auth.MakeJWT(dbUser.ID, cfg.JWTSecret, expirationTime)
+		// Generate JWT refresh token
+		refreshToken, err := auth.MakeRefreshToken()
 		if err != nil {
-			helpers.RespondWithError(w, http.StatusInternalServerError, "Faile to generate JWT access token", err)
+			helpers.RespondWithError(w, http.StatusInternalServerError, "Failed to generate refresh token", err)
 			return
+		}
+
+		_, err = cfg.DBQueries.CreateRefreshToken(r.Context(), database.CreateRefreshTokenParams{
+			Token:     refreshToken,
+			UserID:    dbUser.ID,
+			ExpiresAt: time.Now().UTC().Add(time.Hour * 24 * 60),
+		})
+		if err != nil {
+			helpers.RespondWithError(w, http.StatusInternalServerError, "Failed to store refresh token to DB", err)
 		}
 
 		// Return user json once password check passed
 		user := helpers.ConvertUser(dbUser)
 		err = helpers.RespondWithJson(w, http.StatusOK, loginResp{
-			User:  user,
-			Token: accessToken,
+			User:         user,
+			Token:        accessToken,
+			RefreshToken: refreshToken,
 		})
 		if err != nil {
 			helpers.RespondWithError(w, http.StatusInternalServerError, "Failed to parse resp data", err)

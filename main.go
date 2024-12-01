@@ -49,6 +49,8 @@ func main() {
 		log.Fatal("JWT_SECRET must be set")
 	}
 
+	polkaKey := os.Getenv("POLKA_KEY")
+
 	dbConn, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatal("Failed to connect to database!\n")
@@ -59,6 +61,7 @@ func main() {
 		DBQueries: dbQueries,
 		Platform:  platform,
 		JWTSecret: jwtSecret,
+		PolkaKey:  polkaKey,
 	}
 
 	mux.Handle("/app/", middleware.MiddlewareMetricsInc(&cfg, http.StripPrefix("/app", http.FileServer(http.Dir(".")))))

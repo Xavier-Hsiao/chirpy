@@ -13,12 +13,6 @@ import (
 	"github.com/Xavier-Hsiao/Chirpy/internal/models"
 )
 
-type loginResp struct {
-	User         models.User `json:"user"`
-	Token        string      `json:"token"`
-	RefreshToken string      `json:"refresh_token"`
-}
-
 // @Summary		Login users
 // @Description	Check if the users are who they claimed
 // @Tags			user
@@ -47,7 +41,6 @@ func HandlerLogin(cfg *config.ApiConfig) http.HandlerFunc {
 			helpers.RespondWithError(w, http.StatusInternalServerError, "Failed to get user by email from db", err)
 			return
 		}
-		log.Printf("dbUser is chirpy red: %v\n", dbUser.IsChirpyRed)
 
 		// Check password
 		err = auth.CheckPasswordHash(params.Password, dbUser.HashedPassword)
@@ -81,9 +74,12 @@ func HandlerLogin(cfg *config.ApiConfig) http.HandlerFunc {
 
 		// Return user json once password check passed
 		user := helpers.ConvertUser(dbUser)
-		log.Printf("Converted User is chirpy red: %v\n", user.IsChirpyRed)
-		response := loginResp{
-			User:         user,
+		response := models.User{
+			ID:           user.ID,
+			CreatedAt:    user.CreatedAt,
+			UpdatedAt:    user.UpdatedAt,
+			Email:        user.Email,
+			IsChirpyRed:  user.IsChirpyRed,
 			Token:        accessToken,
 			RefreshToken: refreshToken,
 		}
@@ -94,6 +90,5 @@ func HandlerLogin(cfg *config.ApiConfig) http.HandlerFunc {
 		}
 
 		log.Printf("User %s logged in!\n", user.Email)
-		log.Printf("LoginResp: %v\n", response)
 	}
 }

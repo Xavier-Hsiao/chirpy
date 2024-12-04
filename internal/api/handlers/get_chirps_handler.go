@@ -3,6 +3,7 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"sort"
 
 	"github.com/Xavier-Hsiao/Chirpy/internal/config"
 	"github.com/Xavier-Hsiao/Chirpy/internal/helpers"
@@ -50,6 +51,21 @@ func HandlerGetChirps(cfg *config.ApiConfig) http.HandlerFunc {
 				UserID:    dbChirp.UserID,
 				Body:      dbChirp.Body,
 			})
+		}
+
+		sortParam := r.URL.Query().Get("sort")
+		switch sortParam {
+		case "desc":
+			sort.Slice(chirps, func(i, j int) bool {
+				return chirps[i].CreatedAt.After(chirps[j].CreatedAt)
+			})
+		case "", "asc":
+			sort.Slice(chirps, func(i, j int) bool {
+				return chirps[i].CreatedAt.Before(chirps[j].CreatedAt)
+			})
+		default:
+			helpers.RespondWithError(w, http.StatusBadRequest, "Invalid sort parameter", err)
+			return
 		}
 
 		// Respond with json data
